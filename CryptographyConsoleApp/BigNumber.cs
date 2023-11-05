@@ -53,6 +53,7 @@ namespace CryptographyConsoleApp
         public static BigNumber Add(BigNumber number1, BigNumber number2)
         {
             BigNumber result = new BigNumber("");
+            
             if (number1.isNegative == number2.isNegative)
             {
                 int hold = 0;
@@ -108,9 +109,17 @@ namespace CryptographyConsoleApp
 
                     result.digits.Add(difference);
                 }
-                BigNumber tempResult = new BigNumber(result.ToString().TrimStart('-', '0'));
-                tempResult.isNegative = result.isNegative;
-                result = tempResult;
+                string strRes = result.ToString().TrimStart('-', '0');
+                if (string.IsNullOrEmpty(strRes))
+                {
+                    strRes = "0";
+                }
+                BigNumber tempResult = new BigNumber(strRes);
+                if (tempResult.digits.Count > 0)
+                {
+                    tempResult.isNegative = result.isNegative;
+                    result = tempResult;
+                }
                 return result;
             }
         }
@@ -231,17 +240,17 @@ namespace CryptographyConsoleApp
                     return false;
                 }
             }
-                
 
             for (int i = 0; i < number1.digits.Count; i++)
             {
-                if (number1.digits[number1.digits.Count - 1 - i] > number2.digits[number1.digits.Count - 1 - i] && !number1.isNegative || number1.digits[number1.digits.Count - 1 - i] < number2.digits[number1.digits.Count - 1 - i] && number1.isNegative)
+
+                if (number1.digits[number1.digits.Count - 1 - i] != number2.digits[number1.digits.Count - 1 - i])
                 {
-                    return false;
-                }   
+                    return (number1.digits[number1.digits.Count - 1 - i] < number2.digits[number1.digits.Count - 1 - i]) ^ number1.isNegative;
+                }
             }
 
-            return true;
+            return false;
         }
 
         public static bool operator >(BigNumber number1, BigNumber number2)
@@ -251,6 +260,10 @@ namespace CryptographyConsoleApp
 
         public static bool operator ==(BigNumber number1, BigNumber number2)
         {
+            if (number1.digits.Count == 1 && number1.digits[0] == 0 && number2.digits.Count == 1 && number2.digits[0] == 0)
+            {
+                return true;
+            }
             if (number1.isNegative != number2.isNegative || number1.digits.Count != number2.digits.Count)
             {
                 return false;
