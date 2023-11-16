@@ -189,7 +189,7 @@ namespace CryptographyConsoleApp
             while (absNumber1 >= absNumber2)
             {
                 absNumber1 = absNumber1 - absNumber2;
-                result = result + new BigNumber("1");
+                //result = result + new BigNumber("1");
             }
 
             return absNumber1;

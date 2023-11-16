@@ -71,13 +71,20 @@ namespace CryptographyConsoleApp
 
         public static BigNumber GCD(BigNumber n1, BigNumber n2)
         {
-            while (n2 != new BigNumber("0"))
+            BigNumber n11 = new BigNumber(n1.ToString());
+            BigNumber n22 = new BigNumber(n2.ToString());
+            if (n22 == new BigNumber("0"))
             {
-                BigNumber temp = new BigNumber(n2.ToString());
-                n2 = n1 % n2;
-                n1 = temp;
+                return n11;
             }
-            return n1;
+
+            while (n22 != new BigNumber("0"))
+            {
+                BigNumber temp = new BigNumber(n22.ToString());
+                n22 = n11 % n22;
+                n11 = temp;
+            }
+            return n11;
         }
 
         public static BigNumber LCM(BigNumber n1, BigNumber n2)
@@ -174,6 +181,38 @@ namespace CryptographyConsoleApp
             return result;
         }
 
+        public static BigNumber Pow(BigNumber n1, BigNumber n2)
+        {
+            if (n2 < new BigNumber("0"))
+            {
+                return null;
+            }
+            if (n2 == new BigNumber("0"))
+            {
+                return new BigNumber("1");
+            }
+            if (n2 == new BigNumber("1") || n1 == new BigNumber("0"))
+            {
+                return n1;
+            }
+
+            var result = new BigNumber("1");
+            var n11 = new BigNumber(n1.ToString());
+            var n22 = new BigNumber(n2.ToString());
+
+            while (n22 > new BigNumber("0"))
+            {
+                if (n22 % new BigNumber("2") == new BigNumber("1"))
+                {
+                    result = result * n11;
+                }
+                n11 = n11 * n11;
+                n22 = n22 / new BigNumber("2");
+            }
+
+            return result;
+        }
+
         public static BigNumber PowByModul(BigNumber n1, BigNumber n2, BigNumber m)
         {
             if (n2 < new BigNumber("0"))
@@ -190,15 +229,17 @@ namespace CryptographyConsoleApp
             }
                 
             var result = new BigNumber("1");
+            var n11 = new BigNumber(n1.ToString());
+            var n22 = new BigNumber(n2.ToString());
 
-            while (n2 > new BigNumber("0"))
+            while (n22 > new BigNumber("0"))
             {
-                if (n2 % new BigNumber("2") == new BigNumber("1"))
+                if (n22 % new BigNumber("2") == new BigNumber("1"))
                 {
-                    result = (result * n1) % m;
+                    result = (result * n11) % m;
                 }
-                n1 = (n1 * n1) % m;
-                n2 = n2 / new BigNumber("2");
+                n11 = (n11 * n11) % m;
+                n22 = n22 / new BigNumber("2");
             }
 
             return result;
@@ -287,6 +328,100 @@ namespace CryptographyConsoleApp
             
             return result;
 
+        }
+
+        public static BigNumber FactorizePollard(BigNumber n, List<BigNumber> bigNumbers)
+        {
+            var random = new Random();
+            BigNumber x = new BigNumber("3000");
+            //BigNumber x = int.Parse(n.ToString()) < int.MaxValue ? new BigNumber(random.Next(2, int.Parse(n.ToString())).ToString()) : new BigNumber(random.Next(2, int.MaxValue).ToString());
+            BigNumber y = new BigNumber(x.ToString());
+            BigNumber d = new BigNumber("1");
+            int i = 0;
+            while (d == new BigNumber("1"))
+            {
+                i++;
+                x = F(x, n);
+                y = F(F(y, n), n);
+                Console.WriteLine($"i:{i}; x:{x}; y:{y}; (x-y):{Abs(x - y)}");
+                d = GCD(Abs(x - y), n);
+            }
+
+            if (d == n)
+            {
+                //bigNumbers.Add(d);
+                return null;
+            }
+            /*else
+            {
+                BigNumber p = n / d;
+                FactorizePollard(d, bigNumbers);
+                FactorizePollard(p, bigNumbers);
+            }*/
+            return d;
+        }
+
+        private static BigNumber Abs(BigNumber n)
+        {
+            BigNumber res = new BigNumber(n.ToString());
+            if (n < new BigNumber("0"))
+            {
+                res = new BigNumber(n.ToString().Trim('-'));
+            }
+            return res;
+        }
+
+        private static BigNumber F(BigNumber x, BigNumber n)
+        {
+            //BigNumber x1 = new BigNumber(x.ToString());
+            //BigNumber n1 = new BigNumber(n.ToString());
+            return ((x * x) + new BigNumber("1")) % n;
+        }
+
+        public static BigNumber BabyGiantStepDiscreteLog(BigNumber a, BigNumber b, BigNumber n)
+        {
+            BigNumber m = Sqrt(n) + new BigNumber("1");
+            BigNumber g = PowByModul(a, m, n);
+            BigNumber g1 = new BigNumber(g.ToString());
+
+            var table = new Dictionary<string, BigNumber>();
+
+            for (BigNumber i = new BigNumber("1"); i <= m; i = i + new BigNumber("1"))
+            {
+                if (!table.ContainsKey(g1.ToString()))
+                {
+                    table.Add(g1.ToString(), i);
+                }
+                g1 = (g1 * g) % n;
+            }
+
+            for (BigNumber i = new BigNumber("0"); i < m; i = i + new BigNumber("1"))
+            {
+                var c = (b * PowByModul(a, i, n)) % n;
+                if (table.ContainsKey(c.ToString()))
+                {
+                    return (table.GetValueOrDefault(c.ToString())) * m - i;
+                }
+            }
+
+            return null;
+        }
+
+        public static BigNumber Sqrt(BigNumber n)
+        {
+            if (n < new BigNumber("0"))
+            {
+                return null;
+            }
+                
+            if (n < new BigNumber("4"))
+            {
+                return n == new BigNumber("0") ? new BigNumber("0") : new BigNumber("1");
+            }
+                
+
+            var k = new BigNumber("2") * Sqrt((n - n % new BigNumber("4")) / new BigNumber("4"));
+            return n < Pow((k + new BigNumber("1")), new BigNumber("2")) ? k : k + new BigNumber("1");
         }
     }
 }
