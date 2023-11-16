@@ -252,8 +252,10 @@ namespace CryptographyConsoleApp
             BigInteger y = 0, x = 1;
 
             if (m == 1)
+            {
                 return 0;
-
+            }
+                
             while (a > 1)
             {
                 BigInteger q = a / m;
@@ -268,7 +270,9 @@ namespace CryptographyConsoleApp
             }
 
             if (x < 0)
+            {
                 x += m0;
+            }
 
             return x;
         }
@@ -307,7 +311,7 @@ namespace CryptographyConsoleApp
 
         public static BigInteger JacobiSymbol(BigInteger a, BigInteger p)
         {
-            if (p <= BigInteger.Parse("0") || p % BigInteger.Parse("2") == BigInteger.Parse("0"))
+            if (p <= BigInteger.Parse("2") || p % BigInteger.Parse("2") == BigInteger.Parse("0"))
             {
                 throw new ArgumentException("P is not correct.");
             }
@@ -358,10 +362,10 @@ namespace CryptographyConsoleApp
 
         }
 
-        public static BigInteger FactorizePollard(BigInteger n, List<BigInteger> BigIntegers)
+        public static BigInteger FactorizePollard(BigInteger n)
         {
             var random = new Random();
-            BigInteger x = int.Parse(n.ToString()) < int.MaxValue ? BigInteger.Parse(random.Next(2, int.Parse(n.ToString())).ToString()) : BigInteger.Parse(random.Next(2, int.MaxValue).ToString());
+            BigInteger x = int.TryParse(n.ToString(), out int c) ? BigInteger.Parse(random.Next(2, int.Parse(n.ToString())).ToString()) : BigInteger.Parse(random.Next(2, int.MaxValue).ToString());
             BigInteger y = BigInteger.Parse(x.ToString());
             BigInteger d = BigInteger.Parse("1");
             while (d == BigInteger.Parse("1"))
@@ -409,6 +413,7 @@ namespace CryptographyConsoleApp
             BigInteger g1 = BigInteger.Parse(g.ToString());
 
             var table = new Dictionary<string, BigInteger>();
+            var table2 = new Dictionary<string, BigInteger>();
 
             for (BigInteger i = BigInteger.Parse("1"); i <= m; i = i + BigInteger.Parse("1"))
             {
@@ -630,7 +635,7 @@ namespace CryptographyConsoleApp
 
 
 
-        public static void ElGamalCurve(ElGamalCurveParams curve, string message)
+        public static string ElGamalCurve(ElGamalCurveParams curve, string message)
         {
             var random = new Random();
             BigInteger k = 3;//int.TryParse(curve.N.ToString(), out int c) ? BigInteger.Parse(random.Next(1, c - 2).ToString()) : BigInteger.Parse(random.Next(1, int.MaxValue - 2).ToString());
@@ -678,6 +683,7 @@ namespace CryptographyConsoleApp
 
             
             Console.WriteLine(text);
+            return text;
         }
     }
 }

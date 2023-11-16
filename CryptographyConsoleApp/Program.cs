@@ -51,7 +51,7 @@ class Program
             BigInteger n = BigInteger.Parse("0DB7C2ABF62E35E7628DFAC6561C5", NumberStyles.AllowHexSpecifier);
 
             ElGamalCurveParams curve = new ElGamalCurveParams(p, a, b, x, y, n);
-            CryptographyBigInt.ElGamalCurve(curve, inputMes);
+            string text = CryptographyBigInt.ElGamalCurve(curve, inputMes);
 
         }
         catch (Exception ex)
