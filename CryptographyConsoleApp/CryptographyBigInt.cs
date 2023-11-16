@@ -633,8 +633,6 @@ namespace CryptographyConsoleApp
             return decryptedMes;
         }
 
-
-
         public static string ElGamalCurve(ElGamalCurveParams curve, string message)
         {
             var random = new Random();
